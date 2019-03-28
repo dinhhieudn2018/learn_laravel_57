@@ -2,13 +2,13 @@
 
 namespace App\Providers;
 
+use App\Models\Category;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Schema; //NEW: Import Schema
+use Illuminate\Support\Facades\Schema;
 
-function boot()
-{
-    Schema::defaultStringLength(191); //NEW: Increase StringLength
-}
+use App\Models\Manufacturer;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -18,7 +18,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        
+        \Schema::defaultStringLength(191);
+        if (\Schema::hasTable('categories') && \Schema::hasTable('manufacturers')) {
+            $categories = Category::with('subcate')->where('parent_id', null)->get();
+            $manufacturers = Manufacturer::all();
+            view()->share(['categories' => $categories,'manufacturers' => $manufacturers]);
+        }
+
     }
 
     /**
